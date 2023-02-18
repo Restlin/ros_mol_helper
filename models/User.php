@@ -132,10 +132,11 @@ class User extends \yii\db\ActiveRecord
         $words = explode(' ', $text);
         if(preg_match('/создать|редактировать/ui', $words[0]) !== false) {
             $content .= "Вы хотите редактировать проект\n";
-            /*$project = Project::find()->joinWith(['teams t'], false)->andWhere(['t.user_id' => $this->id])->orderBy('project_id desc')->limit(1)->one();
+            $project = Project::find()->joinWith(['teams t'], false)->andWhere(['t.user_id' => $this->id])->orderBy('project_id desc')->limit(1)->one();
             if($project) {
                 $content .= "Ваш активный проект: {$project->name}\n";
             }
+            /*
             if(preg_match('/мероприятие/ui', $words[1]) !== false) {
                 $content .= "Вы хотите создать мероприятие!\n";
                 $name = preg_replace("/^.+мероприятие +/ui", $text);
