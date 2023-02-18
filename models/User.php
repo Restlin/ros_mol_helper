@@ -131,13 +131,13 @@ class User extends \yii\db\ActiveRecord
         $content = "Принята команда: $text\n";
         $words = explode(' ', $text);
         if(preg_match('/создать|редактировать/ui', $words[0]) !== false) {
-            $content = "Вы хотите редактировать проект\n";
+            $content .= "Вы хотите редактировать проект\n";
             $project = Project::find()->joinWith(['teams t'], false)->andWhere(['t.user_id' => $this->id])->orderBy('project_id desc')->limit(1)->one();
             if($project) {
-                $content = "Ваш активный проект: {$project->name}\n";
+                $content .= "Ваш активный проект: {$project->name}\n";
             }
             if(preg_match('/мероприятие/ui', $words[1]) !== false) {
-                $content = "Вы хотите создать мероприятие!\n";
+                $content .= "Вы хотите создать мероприятие!\n";
                 $name = preg_replace("/^.+мероприятие +/ui", $text);
                 $event = new Event();
                 $event->project_id = $project ? $project->id : null;
@@ -145,9 +145,7 @@ class User extends \yii\db\ActiveRecord
                 $now = new \DateTim();
                 $now->modify('last day of month');
                 $event->date_plan = $now->format('d.m.Y');
-                if($event->save()) {
-                    
-                }
+                $event->save();
             }
         }
         $telegram = Yii::$container->get(\Longman\TelegramBot\Telegram::class);
