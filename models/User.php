@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use Longman\TelegramBot\Request;
 
 /**
  * This is the model class for table "user".
@@ -124,6 +125,12 @@ class User extends \yii\db\ActiveRecord
             $list[$model->id] = $model->fio;
         }
         return $list;
+    }
+
+    public function parseCommand(string $text) {
+        $content = "Принята команда: $text";
+        $telegram = Yii::$container->get(\Longman\TelegramBot\Telegram::class);
+        Request::sendMessage(['chat_id' => $this->tg_id, 'text' => $content]);
     }
 
 }
