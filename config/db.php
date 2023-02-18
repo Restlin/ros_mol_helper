@@ -2,9 +2,9 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'pgsql:host=localhost;dbname=grant-helper',
+    'dsn' => 'pgsql:host=127.0.0.1;dbname=grant-helper',
     'username' => 'postgres',
-    'password' => '',
+    'password' => '12345',
     'charset' => 'utf8',
     'on afterOpen' => fn($event) => $event->sender->createCommand("set datestyle = 'German,DMY'")->execute(),
 
