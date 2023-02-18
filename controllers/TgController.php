@@ -71,9 +71,7 @@ class TgController extends Controller
         if($this->user->tg_id) {
             throw new BadRequestHttpException('У вас уже подключен телеграм!');
         }
-        $this->user->tg_token = Yii::$app->security->generateRandomString();
-        $this->user->save();
-        return $this->redirect("https://telegram.me/itAnimalsRosMolbot?start={$this->user->tg_token}");
+        return $this->redirect("https://telegram.me/itAnimalsRosMolbot?start={$this->user->id}");
     }
 
     public function actionTest() {
