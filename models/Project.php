@@ -61,6 +61,7 @@ class Project extends \yii\db\ActiveRecord
             $team->user_id = $this->author_id;
             $team->type = ProjectTeam::TYPE_MEMBER;
             $team->project_id = $this->id;
+            $team->role = 'Автор проекта';
             $team->save();
         }
         if(!$this->result) {
