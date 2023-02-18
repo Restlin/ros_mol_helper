@@ -140,8 +140,8 @@ class User extends \yii\db\ActiveRecord
             }
 
             if(preg_match('/мероприятие/ui', $words[1]) !== false) {
-                $name = preg_replace("/^.+?мероприятие +/ui", $text);
-                $content .= "Вы хотите создать мероприятие $name!\n";
+                //$name = preg_replace("/^.+?мероприятие +/ui", $text);
+                $content .= "Вы хотите создать мероприятие!\n";
                 /*$event = new Event();
                 $event->project_id = $project ? $project->id : null;
                 $event->name = $name;
