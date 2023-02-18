@@ -48,6 +48,8 @@ class StartCommand extends SystemCommand
      */
     public function execute(): ServerResponse
     {
+        return $this->replyToChat("🙃 вы уже подписаны на уведомления.");
+
         $chatId = $this->getMessage()->getChat()->getId();        
         $user = User::findOne(['tg_id' => $chatId]);
         if ($user) {
