@@ -96,10 +96,10 @@ class TgController extends Controller
             $chatId = $obj['message']['from']['id'];
             $text = isset($obj['message']['text']) ? $obj['message']['text'] : null;
 
-            $user = User::findOne(['tg_id' => $chatId]);
+            /*$user = User::findOne(['tg_id' => $chatId]);
             if($user) {
                 $user->parseCommand($text);
-            }
+            }*/
             //debug
             /*Request::sendMessage([
                 'chat_id' => 166851699,
