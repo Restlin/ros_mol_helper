@@ -52,11 +52,11 @@ class StartCommand extends SystemCommand
         $user = User::findOne(['tg_id' => $chatId]);
         if ($user) {
             return $this->replyToChat("🙃 {$user->fio}, вы уже подписаны на уведомления.");
-        }
-        return $this->replyToChat("проверка1");
+        }        
 
         $userId = $this->getMessage()->getText(true);
-        $user = User::findOne(['id' => $userId]);
+        $user = $userId ? User::findOne(['id' => $userId]) : null;
+        
         if ($user && !$user->tg_id) {
             $user->tg_id = $chatId;
             if ($user->save()) {
