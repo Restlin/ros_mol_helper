@@ -51,7 +51,7 @@ class StartCommand extends SystemCommand
         $chatId = $this->getMessage()->getChat()->getId();        
         $user = User::findOne(['tg_id' => $chatId]);
         if ($user) {
-            return $this->replyToChat("🙃 {$user->fioCompact()}, вы уже подписаны на уведомления.");
+            return $this->replyToChat("🙃 {$user->fio}, вы уже подписаны на уведомления.");
         }
 
         $userId = $this->getMessage()->getText(true);
