@@ -16,7 +16,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Подключить tg бота', ['tg/connect', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?php if($model->tg_id) {
+            echo Html::a('Тест tg бота', ['tg/test', 'id' => $model->id], ['class' => 'btn btn-primary']);
+        } else {
+            echo Html::a('Подключить tg бота', ['tg/connect', 'id' => $model->id], ['class' => 'btn btn-primary']);
+        }?>
     </p>
 
     <?= DetailView::widget([

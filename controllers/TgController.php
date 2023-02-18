@@ -76,7 +76,7 @@ class TgController extends Controller
 
     public function actionTest() {
         if($this->user->tg_id) {
-            Request::sendMessage(['chat_id' => $user->tg_id, 'text' => "Тестовое сообщение"]);
+            Request::sendMessage(['chat_id' => $this->user->tg_id, 'text' => "Тестовое сообщение"]);
         }
         $this->redirect(['/user/my']);
     }
