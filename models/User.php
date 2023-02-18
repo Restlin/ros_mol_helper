@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use Longman\TelegramBot\Request;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "user".
@@ -134,20 +135,21 @@ class User extends \yii\db\ActiveRecord
             $content .= "Вы хотите редактировать проект\n";
             $project = Project::find()->joinWith(['teams t'], false)->andWhere(['t.user_id' => $this->id])->orderBy('project_id desc')->limit(1)->one();
             if($project) {
-                $content .= "Ваш активный проект: {$project->name}\n";
+                $url = Url::to(['project/view', 'id' => $project->id], true);
+                $content .= "Ваш активный проект: {$project->name} $url\n";
             }
-            /*
+            
             if(preg_match('/мероприятие/ui', $words[1]) !== false) {
                 $content .= "Вы хотите создать мероприятие!\n";
                 $name = preg_replace("/^.+мероприятие +/ui", $text);
                 $event = new Event();
                 $event->project_id = $project ? $project->id : null;
                 $event->name = $name;
-                $now = new \DateTim();
+                $now = new \DateTime();
                 $now->modify('last day of month');
                 $event->date_plan = $now->format('d.m.Y');
                 $event->save();
-            }*/
+            }
         }
         $telegram = Yii::$container->get(\Longman\TelegramBot\Telegram::class);
         Request::sendMessage(['chat_id' => $this->tg_id, 'text' => $content]);
