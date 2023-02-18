@@ -139,7 +139,7 @@ class User extends \yii\db\ActiveRecord
                 $content .= "Ваш активный проект: {$project->name} $url\n";
             }
             
-            if(preg_match('/мероприятие/ui', $words[1]) !== false) {
+            //if(preg_match('/мероприятие/ui', $words[1]) !== false) {
                 //$name = preg_replace("/^.+мероприятие +/ui", $text);
                 //$content .= "Вы хотите создать мероприятие $name!\n";
                 /*$event = new Event();
@@ -149,7 +149,7 @@ class User extends \yii\db\ActiveRecord
                 $now->modify('last day of month');
                 $event->date_plan = $now->format('d.m.Y');
                 $event->save();*/
-            }
+            //}
         }
         $telegram = Yii::$container->get(\Longman\TelegramBot\Telegram::class);
         Request::sendMessage(['chat_id' => $this->tg_id, 'text' => $content]);
