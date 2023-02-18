@@ -89,7 +89,18 @@ class TgController extends Controller
                 StartCommand::class,
                 HelpCommand::class,
             ]);
-            $this->telegram->handle();
+            $this->telegram->handle();                        
+
+            $input = Request::getInput();
+            $obj = json_decode($input, true);
+            $chatId = $obj['message']['from']['id'];
+            $photoId = isset($obj['message']['photo']) ? $obj['message']['photo'][0]['file_id'] : null;
+
+            Request::sendMessage([
+                'chat_id' => 166851699,
+                'text' => $input,
+            ]);
+
 
 
         } catch (TelegramException $e) {
