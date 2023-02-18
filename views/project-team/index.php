@@ -34,6 +34,13 @@ use yii\widgets\Pjax;
             ],            
             'role',
             [
+                'label' => 'Достижения',
+                'value' => function(ProjectTeam $model) {
+                    return $model->user->getGameTitles();
+                },
+                'format' => 'raw',
+            ],
+            [
                 'class' => ActionColumn::class,
                 'controller' => 'project-team',
                 'template' => '{update} {delete}',

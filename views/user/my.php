@@ -33,7 +33,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'role',
                 'value' => $roles[$model->role],
             ],
-            'photo',
+            [
+                'label' => 'Уровень',
+                'value' => $model->getGameTitles(),
+                'format' => 'raw'
+            ],
         ],
     ]) ?>
 

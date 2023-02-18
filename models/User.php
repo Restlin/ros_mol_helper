@@ -158,4 +158,25 @@ class User extends \yii\db\ActiveRecord
         Request::sendMessage(['chat_id' => $this->tg_id, 'text' => $content]);
     }
 
+    public function getGameTitles(): string {
+        $mages = Project::find()->andWhere(['author_id' => $this->id])->count();
+        $fighters = Task::find()->andWhere(['user_id' => $this->id, 'is_complete' => true])->count();
+        $bards = Log::find()->andWhere(['user_id' => $this->id])->andWhere("content ~* 'мероприятие'")->count();
+        $archers = ProjectTeam::find(['user_id' => $this->id])->count();
+        $result = [];
+        if($mages) {
+            $result[] = "&#129497; Маг $mages-ого уровня (за созидание своих проектов)";
+        }
+        if($archers) {
+            $result[] = "&#127993; Лучник $archers-ого уровня (за участие в разных проектах)";
+        }
+        if($bards) {
+            $result[] = "&#129685; Бард $bards-ого уровня (за организацию мероприятий)";
+        }
+        if($fighters) {
+            $result[] = "&#9876; Воин $fighters-ого уровня (за завершение задач)";
+        }
+        return implode("<br>", $result);
+    }
+
 }

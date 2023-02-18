@@ -19,6 +19,7 @@ $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Проекты', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+$percent = $model->readyPercent();
 ?>
 <div class="project-view">
 
@@ -51,12 +52,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => $model->author->fio,
             ],
             [
-                'label' => 'Процент заполненности',
-                'value' => $model->readyPercent(),
-            ],
-            [
                 'attribute' => 'status',
                 'value' => $statuses[$model->status],
+            ],
+            [
+                'label' => 'Процент заполненности',
+                'value' => $percent,
+            ],
+            [
+                'label' => 'Достижение вашего проекта',
+                'value' => $model->gameTitle($percent),
             ],
         ],
     ]) ?>
