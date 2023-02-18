@@ -55,6 +55,7 @@ class StartCommand extends SystemCommand
         }        
 
         $userId = $this->getMessage()->getText(true);
+        return $this->replyToChat("проверка1 $userId");
         $user = $userId ? User::findOne(['id' => $userId]) : null;
         
         if ($user && !$user->tg_id) {
