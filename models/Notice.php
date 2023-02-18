@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Longman\TelegramBot\Request;
 use Yii;
 
 /**

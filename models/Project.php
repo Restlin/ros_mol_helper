@@ -56,6 +56,13 @@ class Project extends \yii\db\ActiveRecord
     }
 
     public function afterSave($insert, $changedAttributes) {
+        if($insert) {
+            $team = new ProjectTeam();
+            $team->user_id = $this->author_id;
+            $team->type = ProjectTeam::TYPE_MEMBER;
+            $team->project_id = $this->id;
+            $team->save();
+        }
         if(!$this->result) {
             $result = new ProjectResult();
             $result->project_id = $this->id;
