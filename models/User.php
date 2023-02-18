@@ -138,7 +138,8 @@ class User extends \yii\db\ActiveRecord
                 $url = Url::to(['project/view', 'id' => $project->id], true);
                 $content .= "Ваш активный проект: {$project->name} $url\n";
             }
-            
+
+            $content .= "{$words[0]}\n";
             //if(preg_match('/мероприятие/ui', $words[1]) !== false) {
                 //$name = preg_replace("/^.+мероприятие +/ui", $text);
                 //$content .= "Вы хотите создать мероприятие $name!\n";
