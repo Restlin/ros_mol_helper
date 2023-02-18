@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use Longman\TelegramBot\Request;
 use yii\helpers\Url;
+use app\models\Event;
 
 /**
  * This is the model class for table "user".
