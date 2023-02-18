@@ -83,7 +83,7 @@ class TgController extends Controller
 
     public function actionHook()
     {
-        //try {
+        try {
             $this->telegram->enableAdmins([166851699]);
             $this->telegram->addCommandClasses([
                 StartCommand::class,
@@ -108,9 +108,9 @@ class TgController extends Controller
 
 
 
-        /*} catch (TelegramException $e) {
+        } catch (TelegramException $e) {
             Yii::error($e->getMessage());
-        }*/
+        }
         $this->response->format = \yii\web\Response::FORMAT_JSON;
         return [
             'status' => 200,
