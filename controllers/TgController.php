@@ -101,10 +101,10 @@ class TgController extends Controller
                 $user->parseCommand($text);
             }*/
             //debug
-            /*Request::sendMessage([
+            Request::sendMessage([
                 'chat_id' => 166851699,
                 'text' => $text.$input,
-            ]);*/
+            ]);
 
 
 
