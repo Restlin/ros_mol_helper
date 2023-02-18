@@ -46,7 +46,7 @@ class Notice extends \yii\db\ActiveRecord
     }
 
     public function afterSave($insert, $changedAttributes) {
-        if($this->user->tg_id) {
+        if($insert && $this->user->tg_id) {
             $telegram = Yii::$container->get(\Longman\TelegramBot\Telegram::class);
             Request::sendMessage(['chat_id' => $this->user->tg_id, 'text' => $this->content]);
         }
