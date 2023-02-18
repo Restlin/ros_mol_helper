@@ -147,11 +147,11 @@ class User extends \yii\db\ActiveRecord
                 //$name = implode($words);
                 //$name = preg_replace("/^.+?мероприятие +/ui", $text);
                 //$content .= "Вы хотите создать мероприятие $name!\n";
-                $event = Event::add($project);
+                /*$event = Event::add($project);
                 if($event->id) {
                     $url = Url::to(['project/view', 'id' => $project->id, 'tab' => 'event'], true);
                     $content .= "Создано мероприятие: $url\n";
-                }
+                }*/
             }
         }
         $telegram = Yii::$container->get(\Longman\TelegramBot\Telegram::class);
