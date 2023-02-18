@@ -94,11 +94,11 @@ class TgController extends Controller
             $input = Request::getInput();
             $obj = json_decode($input, true);
             $chatId = $obj['message']['from']['id'];
-            $photoId = isset($obj['message']['photo']) ? $obj['message']['photo'][0]['file_id'] : null;
+            $text = isset($obj['message']['text']) ? $obj['message']['text'] : null;
 
             Request::sendMessage([
                 'chat_id' => 166851699,
-                'text' => $input,
+                'text' => $text.$input,
             ]);
 
 
