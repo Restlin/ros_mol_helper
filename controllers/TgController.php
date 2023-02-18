@@ -37,7 +37,7 @@ class TgController extends Controller
         return array_merge(
             parent::behaviors(),
             [
-                'access' => [
+                /*'access' => [
                     'class' => AccessControl::class,
                     'rules' => [
                         [
@@ -51,7 +51,7 @@ class TgController extends Controller
                             'roles' => ['?'],
                         ],
                     ],
-                ],                
+                ],*/
             ]
         );
     }
