@@ -146,13 +146,8 @@ class User extends \yii\db\ActiveRecord
                 //$name = implode($words);
                 //$name = preg_replace("/^.+?мероприятие +/ui", $text);
                 //$content .= "Вы хотите создать мероприятие $name!\n";
-                $event = new Event();
-                $event->project_id = $project ? $project->id : null;
-                $event->name = 'Tect';
-                $now = new \DateTime();
-                $now->modify('last day of month');
-                $event->date_plan = $now->format('d.m.Y');
-                if($event->save()) {
+                $event = Event::add($project);
+                if($event->id) {
                     $url = Url::to(['project/view', 'id' => $project->id, 'tab' => 'event'], true);
                     $content .= "Создано мероприятие: $url\n";
                 }

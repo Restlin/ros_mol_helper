@@ -66,7 +66,7 @@ class ProjectController extends Controller
      */
     public function actionView($id, $tab = 'team')
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($id);        
         return $this->render('view', [
             'model' => $model,
             'statuses' => Project::getStatusList(),

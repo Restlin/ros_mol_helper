@@ -99,4 +99,15 @@ class Event extends \yii\db\ActiveRecord
         }
         return $list;
     }
+
+    public static function add(Project $project) {
+        $event = new Event();
+        $event->project_id = $project->id;
+        $event->name = 'Tect';
+        $now = new \DateTime();
+        $now->modify('last day of this month');
+        $event->date_plan = $now->format('d.m.Y');
+        $event->save();
+        return $event;
+    }
 }
