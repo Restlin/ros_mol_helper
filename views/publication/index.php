@@ -10,6 +10,7 @@ use yii\widgets\Pjax;
 /** @var app\models\PublicationSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 /** @var array $types */
+/** @var boolean $canEdit */
 
 ?>
 <div class="publication-index">
@@ -17,14 +18,16 @@ use yii\widgets\Pjax;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Создать', ['publication/create', 'projectId' => $searchModel->projectId], ['class' => 'btn btn-success']) ?>
+        <?php if($canEdit) {
+            echo Html::a('Создать', ['publication/create', 'projectId' => $searchModel->projectId], ['class' => 'btn btn-success']);
+        }  ?>
     </p>
 
     <?php Pjax::begin(); ?>    
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => false,
+        'filterModel' => null,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],            
             [
@@ -47,7 +50,7 @@ use yii\widgets\Pjax;
                 'class' => ActionColumn::class,
                 'controller' => 'publication',
                 'template' => '{update} {delete}',
-               
+                'visible' => $canEdit,
             ],
         ],
     ]); ?>

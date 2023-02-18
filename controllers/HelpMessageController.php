@@ -7,12 +7,21 @@ use app\models\HelpMessageSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use app\models\User;
+use Yii;
 
 /**
  * HelpMessageController implements the CRUD actions for HelpMessage model.
  */
 class HelpMessageController extends Controller
 {
+    private ?User $user;
+
+    public function __construct($id, $module, $config = []) {
+        $this->user = Yii::$app->user->isGuest ? null : Yii::$app->user->getIdentity()->user;
+        parent::__construct($id, $module, $config);
+    }
     /**
      * @inheritDoc
      */
@@ -21,6 +30,18 @@ class HelpMessageController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                            'matchCallback' => function() {
+                                return $this->user->role == User::ROLE_ADMIN;
+                            }
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::class,
                     'actions' => [

@@ -9,6 +9,7 @@ use yii\widgets\Pjax;
 /** @var yii\web\View $this */
 /** @var app\models\ProjectTeamSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
+/** @var boolean $canEdit */
 
 ?>
 <div class="project-team-index">
@@ -16,14 +17,16 @@ use yii\widgets\Pjax;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Добавить', ['project-team/create', 'projectId' => $searchModel->project_id], ['class' => 'btn btn-success']) ?>
+        <?php if($canEdit) {
+            echo Html::a('Добавить', ['project-team/create', 'projectId' => $searchModel->project_id], ['class' => 'btn btn-success']);
+        }?>
     </p>
 
     <?php Pjax::begin(); ?>    
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        'filterModel' => null,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],                        
             [
@@ -44,6 +47,7 @@ use yii\widgets\Pjax;
                 'class' => ActionColumn::class,
                 'controller' => 'project-team',
                 'template' => '{update} {delete}',
+                'visible' => $canEdit,
             ],
         ],
     ]); ?>

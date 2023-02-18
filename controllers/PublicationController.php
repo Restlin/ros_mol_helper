@@ -4,17 +4,27 @@ namespace app\controllers;
 
 use app\models\Project;
 use app\models\Event;
+use app\models\User;
 use app\models\Publication;
-use app\models\PublicationSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use Yii;
+
 
 /**
  * PublicationController implements the CRUD actions for Publication model.
  */
 class PublicationController extends Controller
 {
+    private ?User $user;
+
+    public function __construct($id, $module, $config = []) {
+        $this->user = Yii::$app->user->isGuest ? null : Yii::$app->user->getIdentity()->user;
+        parent::__construct($id, $module, $config);
+    }
     /**
      * @inheritDoc
      */
@@ -23,6 +33,15 @@ class PublicationController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::class,
                     'actions' => [
@@ -31,36 +50,7 @@ class PublicationController extends Controller
                 ],
             ]
         );
-    }
-
-    /**
-     * Lists all Publication models.
-     *
-     * @return string
-     */
-    public function actionIndex()
-    {
-        $searchModel = new PublicationSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
-     * Displays a single Publication model.
-     * @param int $id ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
+    }  
 
     /**
      * Creates a new Publication model.
@@ -71,6 +61,10 @@ class PublicationController extends Controller
     {
         $model = new Publication();
         $project = Project::findOne($projectId); //@todo обработать отсутствие проекта
+
+        if(!$project || !$project->canEdit($this->user)) {
+            throw new ForbiddenHttpException('Вы не можете создавать публикацию в этом проекте!');
+        }
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -99,6 +93,10 @@ class PublicationController extends Controller
     {
         $model = $this->findModel($id);
 
+        if(!$model->project->canEdit($this->user)) {
+            throw new ForbiddenHttpException('Вы не можете изменять публикацию в этом проекте!');
+        }
+
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['project/view', 'id' => $model->event->project_id, 'tab' => 'publication']);
         }
@@ -121,6 +119,9 @@ class PublicationController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
+        if(!$model->project->canEdit($this->user)) {
+            throw new ForbiddenHttpException('Вы не можете удалять публикацию в этом проекте!');
+        }
         $model->delete();
 
         return $this->redirect(['project/view', 'id' => $model->event->project_id, 'tab' => 'publication']);

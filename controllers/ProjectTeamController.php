@@ -7,13 +7,22 @@ use app\models\ProjectTeam;
 use app\models\ProjectTeamSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use Yii;
 
 /**
  * ProjectTeamController implements the CRUD actions for ProjectTeam model.
  */
 class ProjectTeamController extends Controller
 {
+    private ?User $user;
+
+    public function __construct($id, $module, $config = []) {
+        $this->user = Yii::$app->user->isGuest ? null : Yii::$app->user->getIdentity()->user;
+        parent::__construct($id, $module, $config);
+    }
     /**
      * @inheritDoc
      */
@@ -22,43 +31,23 @@ class ProjectTeamController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                     ],
                 ],
             ]
         );
-    }
-
-    /**
-     * Lists all ProjectTeam models.
-     *
-     * @return string
-     */
-    public function actionIndex()
-    {
-        $searchModel = new ProjectTeamSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
-     * Displays a single ProjectTeam model.
-     * @param int $id ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
     }
 
     /**
@@ -71,6 +60,9 @@ class ProjectTeamController extends Controller
         $model = new ProjectTeam();
         $model->type = ProjectTeam::TYPE_MEMBER;
         $model->project_id = $projectId;
+        if(!$model->project->canEdit($this->user)) {
+            throw new ForbiddenHttpException('Вы не можете приглашать участника в этот проект!');
+        }
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -97,6 +89,10 @@ class ProjectTeamController extends Controller
     {
         $model = $this->findModel($id);
 
+        if(!$model->project->canEdit($this->user)) {
+            throw new ForbiddenHttpException('Вы не можете изменять участника в этом проекте!');
+        }
+
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['project/view', 'id' => $model->project_id, 'tab' => 'team']);
         }
@@ -117,6 +113,10 @@ class ProjectTeamController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
+
+        if(!$model->project->canEdit($this->user)) {
+            throw new ForbiddenHttpException('Вы не можете удалять участника в этом проекте!');
+        }
         $model->delete();
 
         return $this->redirect(['project/view', 'id' => $model->project_id, 'tab' => 'team']);

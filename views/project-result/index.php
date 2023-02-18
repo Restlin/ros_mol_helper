@@ -9,6 +9,7 @@ use yii\widgets\Pjax;
 /** @var yii\web\View $this */
 /** @var app\models\ProjectResultSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
+/** @var boolean $canEdit */
 
 ?>
 <div class="project-result-index">
@@ -19,7 +20,7 @@ use yii\widgets\Pjax;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => false,
+        'filterModel' => null,
         'columns' => [            
             'events',
             'men',
@@ -30,6 +31,7 @@ use yii\widgets\Pjax;
                 'class' => ActionColumn::class,
                 'template' => '{update}',
                 'controller' => 'project-result',
+                'visible' => $canEdit,
             ],
         ],
     ]); ?>

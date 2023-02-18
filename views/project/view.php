@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\bootstrap5\Tabs;
+use app\models\Project;
 
 /** @var yii\web\View $this */
 /** @var app\models\Project $model */
@@ -14,6 +15,7 @@ use yii\bootstrap5\Tabs;
 /** @var string $eventIndex */
 /** @var string $publicationIndex */
 /** @var string $logIndex */
+/** @var boolean $canEdit */
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Проекты', 'url' => ['index']];
@@ -26,16 +28,22 @@ $percent = $model->readyPercent();
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Изменить', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Отправить на проверку', ['check', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
-        <?= Html::a('Принять заявку', ['accept', 'id' => $model->id], ['class' => 'btn btn-warning']) ?>
-        <?= Html::a('Удалить', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Вы уверены, что хотите удалить проект?',
-                'method' => 'post',
-            ],
-        ]) ?>
+        <?php
+        if($canEdit) {
+            echo Html::a('Изменить', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']),' ',
+            Html::a('Отправить на проверку', ['check', 'id' => $model->id], ['class' => 'btn btn-success']),' ',
+            Html::a('Удалить', ['delete', 'id' => $model->id], [
+                'class' => 'btn btn-danger',
+                'data' => [
+                    'confirm' => 'Вы уверены, что хотите удалить проект?',
+                    'method' => 'post',
+                ],
+            ]),' ';
+        }
+        if($isAdmin && $model->status == Project::STATUS_CHECK) {
+            echo Html::a('Принять заявку', ['accept', 'id' => $model->id], ['class' => 'btn btn-warning']);
+        }
+        ?>
     </p>
 
     <?= DetailView::widget([
@@ -97,7 +105,8 @@ $percent = $model->readyPercent();
         [
             'label' => 'Изменения',
             'content' => $logIndex,
-            'active' => $tab == 'log'
+            'active' => $tab == 'log',
+            'visible' => $canEdit
         ],
     ],
 ]) ?>

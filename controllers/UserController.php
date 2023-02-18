@@ -7,13 +7,19 @@ use app\models\UserSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 use Yii;
-
 /**
  * UserController implements the CRUD actions for User model.
  */
 class UserController extends Controller
 {
+    private ?User $user;
+
+    public function __construct($id, $module, $config = []) {
+        $this->user = Yii::$app->user->isGuest ? null : Yii::$app->user->getIdentity()->user;
+        parent::__construct($id, $module, $config);
+    }
     /**
      * @inheritDoc
      */
@@ -22,6 +28,28 @@ class UserController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                            'matchCallback' => function() {
+                                return $this->user->role == User::ROLE_ADMIN;
+                            }
+                        ],
+                        [
+                            'allow' => true,
+                            'actions' => ['my'],
+                            'roles' => ['@'],
+                        ],
+                        [
+                            'allow' => true,
+                            'actions' => ['register', 'register-success'],
+                            'roles' => ['?'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::class,
                     'actions' => [
@@ -175,6 +203,6 @@ class UserController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException('Такого пользователя не существует!');
     }
 }

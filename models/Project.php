@@ -170,6 +170,13 @@ class Project extends \yii\db\ActiveRecord
         ];
     }
 
+    public function canEdit(User $user) {
+        if($this->status != self::STATUS_DRAFT) {
+            return false;
+        }
+        return $this->getTeams()->andWhere(['user_id' => $user->id])->count() ? true : false;
+    }
+
     public function readyPercent(): float {
         $total = 0;
         $complete = 0;

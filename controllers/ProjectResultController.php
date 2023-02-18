@@ -3,16 +3,26 @@
 namespace app\controllers;
 
 use app\models\ProjectResult;
+use app\models\User;
 use app\models\ProjectResultSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use Yii;
 
 /**
  * ProjectResultController implements the CRUD actions for ProjectResult model.
  */
 class ProjectResultController extends Controller
 {
+    private ?User $user;
+
+    public function __construct($id, $module, $config = []) {
+        $this->user = Yii::$app->user->isGuest ? null : Yii::$app->user->getIdentity()->user;
+        parent::__construct($id, $module, $config);
+    }
     /**
      * @inheritDoc
      */
@@ -21,6 +31,15 @@ class ProjectResultController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::class,
                     'actions' => [
@@ -29,58 +48,8 @@ class ProjectResultController extends Controller
                 ],
             ]
         );
-    }
-
-    /**
-     * Lists all ProjectResult models.
-     *
-     * @return string
-     */
-    public function actionIndex()
-    {
-        $searchModel = new ProjectResultSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
-     * Displays a single ProjectResult model.
-     * @param int $id ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
-     * Creates a new ProjectResult model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
-    public function actionCreate()
-    {
-        $model = new ProjectResult();
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['project/view', 'id' => $model->project_id]);
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
-
-        return $this->render('form', [
-            'model' => $model,
-        ]);
-    }
+    }    
+    
 
     /**
      * Updates an existing ProjectResult model.
@@ -92,6 +61,9 @@ class ProjectResultController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        if(!$model->project->canEdit($this->user)) {
+            throw new ForbiddenHttpException('Вы не можете изменять результат этого проекта!');
+        }
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['project/view', 'id' => $model->project_id]);
@@ -100,20 +72,6 @@ class ProjectResultController extends Controller
         return $this->render('form', [
             'model' => $model,
         ]);
-    }
-
-    /**
-     * Deletes an existing ProjectResult model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['project/view', 'id' => $model->project_id]);
     }
 
     /**
@@ -129,6 +87,6 @@ class ProjectResultController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException('Нет такого результата проекта.');
     }
 }

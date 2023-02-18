@@ -9,6 +9,7 @@ use yii\widgets\Pjax;
 /** @var yii\web\View $this */
 /** @var app\models\EventSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
+/** @var boolean $canEdit */
 
 ?>
 <div class="event-index">
@@ -16,14 +17,16 @@ use yii\widgets\Pjax;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Создать', ['event/create', 'projectId' => $searchModel->project_id], ['class' => 'btn btn-success']) ?>
+        <?php if($canEdit) {
+            echo Html::a('Создать', ['event/create', 'projectId' => $searchModel->project_id], ['class' => 'btn btn-success']);
+        }?>
     </p>
 
     <?php Pjax::begin(); ?>    
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => false,
+        'filterModel' => null,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],            
             'name',
@@ -48,7 +51,8 @@ use yii\widgets\Pjax;
             [
                 'class' => ActionColumn::class,
                 'template' => '{update} {delete}',
-                'controller' => 'event'
+                'controller' => 'event',
+                'visible' => $canEdit,
             ],
         ],
     ]); ?>

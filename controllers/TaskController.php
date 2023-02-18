@@ -7,13 +7,22 @@ use app\models\User;
 use app\models\TaskSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use Yii;
 
 /**
  * TaskController implements the CRUD actions for Task model.
  */
 class TaskController extends Controller
 {
+    private ?User $user;
+
+    public function __construct($id, $module, $config = []) {
+        $this->user = Yii::$app->user->isGuest ? null : Yii::$app->user->getIdentity()->user;
+        parent::__construct($id, $module, $config);
+    }
     /**
      * @inheritDoc
      */
@@ -22,6 +31,15 @@ class TaskController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,                            
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::class,
                     'actions' => [
@@ -70,6 +88,9 @@ class TaskController extends Controller
     {
         $model = new Task();
         $model->project_id = $projectId;
+        if(!$model->project->canEdit($this->user)) {
+            throw new ForbiddenHttpException('Вы не можете создавать задачу на этот проект!');
+        }
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -95,6 +116,9 @@ class TaskController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        if(!$model->project->canEdit($this->user)) {
+            throw new ForbiddenHttpException('Вы не можете изменять задачу этого проекта!');
+        }
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['project/view', 'id' => $model->project_id, 'tab' => 'task']);
@@ -116,6 +140,9 @@ class TaskController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
+        if(!$model->project->canEdit($this->user)) {
+            throw new ForbiddenHttpException('Вы не можете удалить задачу этого проекта!');
+        }
         $model->delete();
 
         return $this->redirect(['project/view', 'id' => $model->project_id, 'tab' => 'task']);
