@@ -66,7 +66,7 @@ class User extends \yii\db\ActiveRecord
             [['tg_id', 'role'], 'default', 'value' => null],
             [['tg_id', 'role'], 'integer'],
             [['role'], 'in', 'range' => array_keys($roles)],
-            [['photo'], 'string'],
+            [['photo'], 'safe'],
             [['photoFile'], 'file', 'extensions' => 'png, jpg'],
             [['email', 'password_hash', 'url'], 'string', 'max' => 100],
             [['fio'], 'string', 'max' => 50],
