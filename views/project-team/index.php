@@ -31,7 +31,7 @@ use yii\widgets\Pjax;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
-                'attribute' => 'photo',
+                'attribute' => 'user.photo',
                 'value' => function(ProjectTeam $model) {
                     return $model->user->photo ?  Html::img(['user/photo', 'id' => $model->user_id],['alt' => 'Фото профиля', 'style' => 'width:100px;']) : null;
                 },
