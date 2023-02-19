@@ -179,9 +179,36 @@ class Project extends \yii\db\ActiveRecord
         return $list;
     }
 
+    /**
+     * Отправка проекта на проверку
+     */
+    public function check() {
+        $this->status = Project::STATUS_CHECK;
+        if($this->save()) {
+            $admins = User::find()->andWhere(['role' => User::ROLE_ADMIN])->all();
+            foreach($admins as $admin) {
+                Notice::add($this, $admin, "Проект отправлен на проверку!");
+            }
+        }
+    }
+    /**
+     * Прием проекта
+     */
+    public function accept() {
+        $this->status = Project::STATUS_GRANT;
+        if($this->save()) {
+            foreach($this->users as $user) {
+                Notice::add($this, $user, "Проект успешно прошел проверку!");
+            }
+        }
+    }
+
     public function canEdit(User $user) {
         if($this->status != self::STATUS_DRAFT) {
             return false;
+        }
+        if($user->role == User::ROLE_ADMIN) {
+            return true;
         }
         return $this->getTeams()->andWhere(['user_id' => $user->id])->count() ? true : false;
     }
@@ -217,7 +244,7 @@ class Project extends \yii\db\ActiveRecord
         } elseif($percent < 100) {
             $result = "Вы буквально в одном шаге от победы, не останавливайтесь и завершите этот квест (проект)!";
         } elseif($percent == 100) {
-            $result = "Вы справились, вы лучшие!    ";
+            $result = "Вы справились, вы лучшие! Проект готов к отправке на проверку!";
         }
         return $result;
     }

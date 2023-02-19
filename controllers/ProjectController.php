@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Notice;
 use app\models\Project;
 use app\models\ProjectTeam;
 use app\models\User;
@@ -261,8 +262,7 @@ class ProjectController extends Controller
         if(!$model->canEdit($this->user)) {
             throw new ForbiddenHttpException('У вас нет прав отправлять проект на проверку!');
         }
-        $model->status = Project::STATUS_CHECK;
-        $model->save();
+        $model->check();
         return $this->redirect(['view', 'id' => $model->id]);
     }
     /**
@@ -272,8 +272,7 @@ class ProjectController extends Controller
      */
     public function actionAccept($id) {
         $model = $this->findModel($id);
-        $model->status = Project::STATUS_GRANT;
-        $model->save();
+        $model->accept();
         return $this->redirect(['view', 'id' => $model->id]);
     }
 

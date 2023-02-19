@@ -29,9 +29,11 @@ $percent = $model->readyPercent();
 
     <p>
         <?php
+        if($canEdit && $percent == 100) {
+            echo Html::a('Отправить на проверку', ['check', 'id' => $model->id], ['class' => 'btn btn-success']),' ';
+        }
         if($canEdit) {
-            echo Html::a('Изменить', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']),' ',
-            Html::a('Отправить на проверку', ['check', 'id' => $model->id], ['class' => 'btn btn-success']),' ',
+            echo Html::a('Изменить', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']),' ',            
             Html::a('Удалить', ['delete', 'id' => $model->id], [
                 'class' => 'btn btn-danger',
                 'data' => [
