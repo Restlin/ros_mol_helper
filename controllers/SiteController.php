@@ -8,9 +8,16 @@ use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
+use app\models\User;
 
 class SiteController extends Controller
 {
+    private ?User $user;
+
+    public function __construct($id, $module, $config = []) {
+        $this->user = Yii::$app->user->isGuest ? null : Yii::$app->user->getIdentity()->user;
+        parent::__construct($id, $module, $config);
+    }
     /**
      * {@inheritdoc}
      */
@@ -57,7 +64,9 @@ class SiteController extends Controller
     public function actionIndex()
     {
         return $this->render('index',[
-            'isGuest' => \Yii::$app->user->isGuest,
+            'isGuest' => $this->user ? false : true,
+            'isAdmin' => $this->user->role == User::ROLE_ADMIN,
+
         ]);
     }
 
