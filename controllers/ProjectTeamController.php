@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\User;
+use app\models\Project;
 use app\models\ProjectTeam;
 use app\models\ProjectTeamSearch;
 use yii\web\Controller;
@@ -75,6 +76,37 @@ class ProjectTeamController extends Controller
         return $this->render('form', [
             'model' => $model,
             'users' => User::getList(),
+        ]);
+    }
+
+    /**
+     * Creates a new ProjectTeam model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return string|\yii\web\Response
+     */
+    public function actionInvite($userId)
+    {
+        $model = new ProjectTeam();
+        $model->user_id = $userId;
+        if($model->user->role == User::ROLE_MENTOR) {
+            $model->type = ProjectTeam::TYPE_MENTOR;
+        } elseif($model->user->role == User::ROLE_INVESTOR) {
+            $model->type = ProjectTeam::TYPE_INVESTOR;
+        } else {
+            $model->type = ProjectTeam::TYPE_MEMBER;
+        }
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['user/profile', 'id' => $model->user_id]);
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('invite', [
+            'model' => $model,
+            'projects' => Project::getMyProjectList($this->user),
         ]);
     }
 

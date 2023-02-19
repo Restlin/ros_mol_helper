@@ -10,6 +10,7 @@ use yii\widgets\Pjax;
 /** @var app\models\ProjectTeamSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 /** @var boolean $canEdit */
+/** @var array $types */
 
 ?>
 <div class="project-team-index">
@@ -28,13 +29,27 @@ use yii\widgets\Pjax;
         'dataProvider' => $dataProvider,
         'filterModel' => null,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],                        
+            ['class' => 'yii\grid\SerialColumn'],
+            [
+                'attribute' => 'photo',
+                'value' => function(ProjectTeam $model) {
+                    return $model->user->photo ?  Html::img(['user/photo', 'id' => $model->user_id],['alt' => 'Фото профиля', 'style' => 'width:100px;']) : null;
+                },
+                'format' => 'raw',
+            ],
             [
                 'attribute' => 'user_id',
                 'value' => function(ProjectTeam $model) {
                     return $model->user->fio;
                 }
-            ],            
+            ],
+            [
+                'attribute' => 'type',
+                'value' => function(ProjectTeam $model) use($types) {
+                    return $types[$model->type];
+                },
+                'filter' => $types,
+            ],
             'role',
             [
                 'label' => 'Достижения',

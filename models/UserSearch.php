@@ -11,6 +11,7 @@ use app\models\User;
  */
 class UserSearch extends User
 {
+    public $withoutAdmin = false;
     /**
      * {@inheritdoc}
      */
@@ -18,7 +19,8 @@ class UserSearch extends User
     {
         return [
             [['id', 'tg_id', 'role'], 'integer'],
-            [['email', 'fio', 'password_hash', 'photo'], 'safe'],
+            [['email', 'fio', 'password_hash', 'photo', 'about', 'url'], 'safe'],
+            [['withoutAdmin'], 'boolean'],
         ];
     }
 
@@ -56,6 +58,10 @@ class UserSearch extends User
             return $dataProvider;
         }
 
+        if($this->withoutAdmin) {
+            $query->andWhere(['<>', 'role', self::ROLE_ADMIN]);
+        }
+
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
@@ -66,6 +72,8 @@ class UserSearch extends User
         $query->andFilterWhere(['ilike', 'email', $this->email])
             ->andFilterWhere(['ilike', 'fio', $this->fio])
             ->andFilterWhere(['ilike', 'password_hash', $this->password_hash])
+            ->andFilterWhere(['ilike', 'about', $this->about])
+            ->andFilterWhere(['ilike', 'url', $this->url])
             ->andFilterWhere(['ilike', 'photo', $this->photo]);
 
         return $dataProvider;

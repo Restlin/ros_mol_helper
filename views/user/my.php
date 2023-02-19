@@ -15,12 +15,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <div><?php if($model->photo) {
+        echo Html::img(['photo', 'id' => $model->id],['alt' => 'Фото профиля', 'style' => 'width:200px; margin: 10px; border: 1px solid #ddd;']);
+    }?></div>
     <p>
         <?php if($model->tg_id) {
-            echo Html::a('Тест tg бота', ['tg/test', 'id' => $model->id], ['class' => 'btn btn-primary']);
+            echo Html::a('Тест tg бота', ['tg/test', 'id' => $model->id], ['class' => 'btn btn-primary']),' ';
         } else {
-            echo Html::a('Подключить tg бота', ['tg/connect', 'id' => $model->id], ['class' => 'btn btn-primary']);
-        }?>
+            echo Html::a('Подключить tg бота', ['tg/connect', 'id' => $model->id], ['class' => 'btn btn-primary']).' ';
+        }
+        echo Html::a('Изменить профиль', ['update-my'], ['class' => 'btn btn-success']);
+        ?>
     </p>
 
     <?= DetailView::widget([
@@ -28,7 +33,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [            
             'email:email',
             'fio',
-            'tg_id',            
+            'about:ntext',
+            'url:url',
+            'tg_id',   
             [
                 'attribute' => 'role',
                 'value' => $roles[$model->role],

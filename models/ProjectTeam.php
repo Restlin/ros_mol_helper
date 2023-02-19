@@ -20,6 +20,7 @@ class ProjectTeam extends \yii\db\ActiveRecord
 {
     const TYPE_MEMBER = 1;
     const TYPE_MENTOR = 2;
+    const TYPE_INVESTOR = 3;
     /**
      * {@inheritdoc}
      */
@@ -70,6 +71,14 @@ class ProjectTeam extends \yii\db\ActiveRecord
             'user_id' => 'Пользователь',
             'type' => 'Тип',
             'role' => 'Роль в проекте',
+        ];
+    }
+
+    public static function getTypeList(): array {
+        return [
+            self::TYPE_MEMBER => 'Участник',
+            self::TYPE_MENTOR => 'Ментор',
+            self::TYPE_INVESTOR => 'Инвестор',
         ];
     }
 

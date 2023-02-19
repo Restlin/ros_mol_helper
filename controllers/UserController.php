@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\web\UploadedFile;
 use Yii;
 /**
  * UserController implements the CRUD actions for User model.
@@ -40,7 +41,7 @@ class UserController extends Controller
                         ],
                         [
                             'allow' => true,
-                            'actions' => ['my'],
+                            'actions' => ['my', 'update-my', 'list', 'profile', 'photo'],
                             'roles' => ['@'],
                         ],
                         [
@@ -78,6 +79,26 @@ class UserController extends Controller
     }
 
     /**
+     * Lists all User models.
+     *
+     * @return string
+     */
+    public function actionList()
+    {
+        $searchModel = new UserSearch();
+        $searchModel->withoutAdmin = true;
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        $roles = User::getRoleList();
+        unset($roles[User::ROLE_ADMIN]);
+        return $this->render('list', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'roles' => $roles,
+        ]);
+    }
+
+    /**
      * Displays a single User model.
      * @param int $id ID
      * @return string
@@ -97,11 +118,41 @@ class UserController extends Controller
      */
     public function actionMy()
     {
-        $model = Yii::$app->user->getIdentity()->user;
+        $model = $this->user;
         return $this->render('my', [
             'model' => $model,
             'roles' => User::getRoleList(),
         ]);
+    }
+
+    /**
+     * Displays a open information about single User model.
+     * @param int $id ID
+     * @return string
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionProfile($id)
+    {
+        $model = $this->findModel($id);
+        return $this->render('profile', [
+            'model' => $model,
+            'roles' => User::getRoleList(),
+        ]);
+    }
+
+    /**
+     * Displays a photo single User model.
+     * @param int $id ID
+     * @return string
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionPhoto($id)
+    {
+        $model = $this->findModel($id);
+        if(!$model->photo) {
+            throw new NotFoundHttpException('Фото такого пользователя не существует!');
+        }
+        return $this->response->sendStreamAsFile($model->photo, "{$model->fio}.png", ['inline' => true]);
     }
 
     /**
@@ -173,6 +224,25 @@ class UserController extends Controller
         return $this->render('form', [
             'model' => $model,
             'roles' => User::getRoleList(),
+        ]);
+    }
+
+    /**
+     * Обновление информации о пользователе
+     * @return string|\yii\web\Response
+     */
+    public function actionUpdateMy()
+    {
+        $model = $this->user;
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->photoFile = UploadedFile::getInstance($model, 'photoFile');
+            if($model->save()) {
+                return $this->redirect(['my']);
+            }
+        }
+
+        return $this->render('form_my', [
+            'model' => $model,
         ]);
     }
 

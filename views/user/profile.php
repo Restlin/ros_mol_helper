@@ -7,8 +7,8 @@ use yii\widgets\DetailView;
 /** @var app\models\User $model */
 /** @var array $roles */
 
-$this->title = $model->fio;
-$this->params['breadcrumbs'][] = ['label' => 'Пользователи', 'url' => ['index']];
+$this->title = 'Профиль';
+$this->params['breadcrumbs'][] = ['label' => 'Витрина пользователей', 'url' => ['list']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -21,25 +21,24 @@ $this->params['breadcrumbs'][] = $this->title;
     }?></div>
 
     <p>
-        <?= Html::a('Изменить', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Удалить', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Вы уверены, что хотите удалить пользователя?',
-                'method' => 'post',
-            ],
-        ]) ?>
+        <?= Html::a('Пригласить в проект', ['project-team/invite', 'userId' => $model->id], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [            
-            'email:email',            
-            'tg_id',            
+            'fio',
+            'about:ntext',
+            'url:url',            
             [
                 'attribute' => 'role',
                 'value' => $roles[$model->role],
-            ],            
+            ],
+            [
+                'label' => 'Уровень',
+                'value' => $model->getGameTitles(),
+                'format' => 'raw'
+            ],
         ],
     ]) ?>
 

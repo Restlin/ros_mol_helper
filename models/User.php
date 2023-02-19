@@ -17,11 +17,18 @@ use app\models\Event;
  * @property string $password_hash Хеш пароля
  * @property int $role Роль
  * @property resource|null $photo Фото
+ * @property string $about
+ * @property string $url
  *
  * @property ProjectTeam[] $teams
  */
 class User extends \yii\db\ActiveRecord
 {
+    /**
+     *
+     * @var \yii\web\UploadedFile
+     */
+    public $photoFile;
     public $password;
     
     const ROLE_DEFAULT = 1;
@@ -41,6 +48,9 @@ class User extends \yii\db\ActiveRecord
         if($this->password) {
             $this->password_hash = \Yii::$app->security->generatePasswordHash($this->password);
         }
+        if($this->photoFile) {
+            $this->photo = file_get_contents($this->photoFile->tempName);
+        }
         return parent::beforeValidate();
     }
 
@@ -57,9 +67,11 @@ class User extends \yii\db\ActiveRecord
             [['tg_id', 'role'], 'integer'],
             [['role'], 'in', 'range' => array_keys($roles)],
             [['photo'], 'string'],
-            [['email', 'password_hash'], 'string', 'max' => 100],
+            [['photoFile'], 'file', 'extensions' => 'png, jpg'],
+            [['email', 'password_hash', 'url'], 'string', 'max' => 100],
             [['fio'], 'string', 'max' => 50],
             [['password'], 'string', 'max' => 30],
+            [['about'], 'string', 'max' => 8000],
             [['email'], 'unique'],
             [['tg_id'], 'unique'],
         ];
@@ -79,6 +91,8 @@ class User extends \yii\db\ActiveRecord
             'password' => 'Пароль',
             'role' => 'Роль',
             'photo' => 'Фото',
+            'about' => 'Описание',
+            'url' => 'Ссылка на резюме',
         ];
     }
 

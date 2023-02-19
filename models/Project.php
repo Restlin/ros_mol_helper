@@ -170,6 +170,15 @@ class Project extends \yii\db\ActiveRecord
         ];
     }
 
+    public static function getMyProjectList(User $author): array {
+        $models = self::find()->andWhere(['author_id' => $author->id, 'status' => self::STATUS_DRAFT])->orderBy('name')->all();
+        $list = [];
+        foreach($models as $model) {
+            $list[$model->id] = $model->name;
+        }
+        return $list;
+    }
+
     public function canEdit(User $user) {
         if($this->status != self::STATUS_DRAFT) {
             return false;

@@ -118,14 +118,14 @@ class ProjectController extends Controller
     private function renderTeamIndex(Project $model, bool $canEdit)
     {
         $searchModel = new ProjectTeamSearch();
-        $searchModel->project_id = $model->id;
-        $searchModel->type = ProjectTeam::TYPE_MEMBER;
+        $searchModel->project_id = $model->id;        
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->renderPartial('/project-team/index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'canEdit' => $canEdit,
+            'types' => ProjectTeamSearch::getTypeList(),
         ]);
     }
 

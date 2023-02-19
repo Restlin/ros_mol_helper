@@ -60,6 +60,7 @@ $this->registerJs($js);
 <header id="header">
     <?php
     NavBar::begin([
+        'brandImage' => '@web/images/logo.svg',
         'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => ['class' => 'navbar-expand-md navbar-dark bg-warning fixed-top']
@@ -103,8 +104,7 @@ $this->registerJs($js);
 <footer id="footer" class="mt-auto py-3 bg-light">
     <div class="container">
         <div class="row text-muted">
-            <div class="col-md-6 text-center text-md-start">&copy; My Company <?= date('Y') ?></div>
-            <div class="col-md-6 text-center text-md-end"><?= Yii::powered() ?></div>
+            <div class="col-md-6 text-center text-md-start">&copy; IT-animals, хакатон "Молодежный бит"  <?= date('Y') ?></div>            
         </div>
     </div>
 </footer>

@@ -11,16 +11,12 @@ use yii\widgets\Pjax;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 /** @var array $roles */
 
-$this->title = 'Пользователи';
+$this->title = 'Витрина пользователей';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Добавить', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <h1><?= Html::encode($this->title) ?></h1>    
 
     <?php Pjax::begin(); ?>    
 
@@ -37,22 +33,27 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
             ],
             [
-                'attribute' => 'email',
+                'attribute' => 'fio',
                 'value' => function(User $model) {
-                    return $model->email;
+                    return Html::a($model->fio, ['user/profile', 'id' => $model->id], ['data-pjax' => 0]);
                 },
+                'format' => 'raw',
             ],            
-            'fio',
             [
                 'attribute' => 'role',
                 'value' => function(User $model) use($roles) {
                     return $roles[$model->role];
                 },
                 'filter' => $roles,
-            ],            
-            //'tg_id',
+            ],
+            'about:ntext',
+            'url:url:Резюме',
             [
-                'class' => ActionColumn::class,
+                'label' => 'Уровень',
+                'value' => function(User $model) {
+                    return $model->getGameTitles();
+                },
+                'format' => 'raw',
             ],
         ],
     ]); ?>
