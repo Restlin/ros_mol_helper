@@ -65,7 +65,7 @@ class SiteController extends Controller
     {
         return $this->render('index',[
             'isGuest' => $this->user ? false : true,
-            'isAdmin' => $this->user->role == User::ROLE_ADMIN,
+            'isAdmin' => $this->user && $this->user->role == User::ROLE_ADMIN,
 
         ]);
     }
