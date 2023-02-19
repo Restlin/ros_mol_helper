@@ -46,13 +46,13 @@ class ProjectTeam extends \yii\db\ActiveRecord
     }
 
     public function afterSave($insert, $changedAttributes) {
-        if($insert && $this->type == self::TYPE_MEMBER) {
+        if($insert && $this->project->author_id != $this->user_id) {
             Notice::add($this->project, $this->user, "Вас пригласили в проект {$this->project->name}!");
         }
         $user = Yii::$app->user->getIdentity()->user;
         $content = $insert ? "Добавлен участник {$this->user->fio} с ролью - {$this->role}" : "Изменен участник {$this->user->fio} с ролью - {$this->role}";
         Log::add($this->project, $user, $content);
-        if($insert) {
+        if($insert && $this->project->author_id != $this->user_id) {
             foreach($this->project->users as $user) {
                 Notice::add($this->project, $user, "В проекте {$this->project->name} добавлен участник {$this->user->fio}");
             }

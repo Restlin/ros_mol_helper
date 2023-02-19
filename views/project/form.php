@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => 100, 'title' => 'bla bla bla']) ?>
+    <?= $form->field($model, 'name')->textInput(['maxlength' => 200, 'title' => 'bla bla bla']) ?>
 
     <?= $form->field($model, 'level')->dropDownList($levels) ?>
 
