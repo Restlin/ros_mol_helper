@@ -176,7 +176,7 @@ class User extends \yii\db\ActiveRecord
         $mages = Project::find()->andWhere(['author_id' => $this->id])->count();
         $fighters = Task::find()->andWhere(['user_id' => $this->id, 'is_complete' => true])->count();
         $bards = Log::find()->andWhere(['user_id' => $this->id])->andWhere("content ~* 'мероприятие'")->count();
-        $archers = ProjectTeam::find(['user_id' => $this->id])->count();
+        $archers = ProjectTeam::find()->andWhere(['user_id' => $this->id])->count();
         $result = [];
         if($mages) {
             $result[] = "&#129497; Маг $mages-ого уровня (за созидание своих проектов)";
